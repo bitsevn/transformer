@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<order orderId="ORD-2024-001" orderType="ONLINE" priority="HIGH">
+    <customer>
+        <customerId>CUST-001</customerId>
+        <personalInfo>
+            <firstName>John</firstName>
+            <lastName>Doe</lastName>
+            <email>john.doe@example.com</email>
+            <phone>+1-555-0123</phone>
+            <dateOfBirth>1985-03-15</dateOfBirth>
+        </personalInfo>
+        <addresses>
+            <address type="BILLING" primary="true">
+                <street>123 Main Street</street>
+                <city>New York</city>
+                <state>NY</state>
+                <zipCode>10001</zipCode>
+                <country>USA</country>
+            </address>
+            <address type="SHIPPING" primary="false">
+                <street>456 Oak Avenue</street>
+                <city>Los Angeles</city>
+                <state>CA</state>
+                <zipCode>90210</zipCode>
+                <country>USA</country>
+            </address>
+        </addresses>
+        <preferences>
+            <communication>EMAIL</communication>
+            <newsletter>true</newsletter>
+            <marketing>false</marketing>
+        </preferences>
+    </customer>
+    <orderDetails>
+        <orderDate>2024-01-15T10:30:00Z</orderDate>
+        <expectedDelivery>2024-01-20</expectedDelivery>
+        <shippingMethod>EXPRESS</shippingMethod>
+        <paymentMethod>CREDIT_CARD</paymentMethod>
+        <currency>USD</currency>
+        <language>EN</language>
+    </orderDetails>
+    <items>
+        <item itemId="ITEM-001" category="ELECTRONICS" brand="TechCorp">
+            <name>Smartphone Pro Max</name>
+            <description>Latest smartphone with advanced features</description>
+            <specifications>
+                <spec name="Storage" value="256GB"/>
+                <spec name="Color" value="Midnight Black"/>
+                <spec name="RAM" value="8GB"/>
+            </specifications>
+            <pricing>
+                <unitPrice>999.99</unitPrice>
+                <discount>50.00</discount>
+                <tax>75.00</tax>
+                <finalPrice>1024.99</finalPrice>
+            </pricing>
+            <quantity>1</quantity>
+            <warranty>24</warranty>
+        </item>
+        <item itemId="ITEM-002" category="ACCESSORIES" brand="TechCorp">
+            <name>Wireless Charger</name>
+            <description>Fast wireless charging pad</description>
+            <specifications>
+                <spec name="Power" value="15W"/>
+                <spec name="Compatibility" value="Qi Standard"/>
+                <spec name="Color" value="White"/>
+            </specifications>
+            <pricing>
+                <unitPrice>49.99</unitPrice>
+                <discount>5.00</discount>
+                <tax>3.75</tax>
+                <finalPrice>48.74</finalPrice>
+            </pricing>
+            <quantity>2</quantity>
+            <warranty>12</warranty>
+        </item>
+    </items>
+    <financial>
+        <subtotal>1099.98</subtotal>
+        <shipping>25.00</shipping>
+        <tax>78.75</tax>
+        <discount>60.00</discount>
+        <total>1143.73</total>
+        <payment>
+            <method>CREDIT_CARD</method>
+            <cardType>VISA</cardType>
+            <lastFourDigits>1234</lastFourDigits>
+            <transactionId>TXN-2024-001</transactionId>
+            <status>APPROVED</status>
+        </payment>
+    </financial>
+    <tracking>
+        <status>PROCESSING</status>
+        <updates>
+            <update timestamp="2024-01-15T10:30:00Z" status="ORDER_PLACED" description="Order has been placed successfully"/>
+            <update timestamp="2024-01-15T14:15:00Z" status="PAYMENT_CONFIRMED" description="Payment has been confirmed"/>
+            <update timestamp="2024-01-15T16:45:00Z" status="INVENTORY_CHECK" description="Inventory availability confirmed"/>
+        </updates>
+    </tracking>
+</order>

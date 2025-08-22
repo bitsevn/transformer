@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<company>
+    <name>InnovationCorp</name>
+    <industry>Consulting</industry>
+    <projects>
+        <project projectId="PRJ001" status="ACTIVE" priority="HIGH">
+            <name>E-commerce Platform Redesign</name>
+            <description>Modernize the existing e-commerce platform with new UI/UX</description>
+            <startDate>2024-01-01</startDate>
+            <deadline>2024-06-30</deadline>
+            <budget>500000</budget>
+            <team>
+                <member role="Project Manager" experience="5">Alice Johnson</member>
+                <member role="Lead Developer" experience="8">Bob Smith</member>
+                <member role="UI Designer" experience="3">Carol Davis</member>
+            </team>
+            <technologies>
+                <tech>React</tech>
+                <tech>Node.js</tech>
+                <tech>MongoDB</tech>
+            </technologies>
+        </project>
+        <project projectId="PRJ002" status="PLANNING" priority="MEDIUM">
+            <name>Mobile App Development</name>
+            <description>Create a cross-platform mobile application for iOS and Android</description>
+            <startDate>2024-03-01</startDate>
+            <deadline>2024-12-31</deadline>
+            <budget>300000</budget>
+            <team>
+                <member role="Mobile Developer" experience="6">David Wilson</member>
+                <member role="UX Designer" experience="4">Eva Brown</member>
+            </team>
+            <technologies>
+                <tech>React Native</tech>
+                <tech>Firebase</tech>
+                <tech>Redux</tech>
+            </technologies>
+        </project>
+        <project projectId="PRJ003" status="COMPLETED" priority="LOW">
+            <name>Data Migration Tool</name>
+            <description>Develop a tool to migrate legacy data to new database system</description>
+            <startDate>2023-09-01</startDate>
+            <deadline>2023-12-31</deadline>
+            <budget>150000</budget>
+            <team>
+                <member role="Data Engineer" experience="7">Frank Miller</member>
+                <member role="Backend Developer" experience="5">Grace Lee</member>
+            </team>
+            <technologies>
+                <tech>Python</tech>
+                <tech>PostgreSQL</tech>
+                <tech>Apache Airflow</tech>
+            </technologies>
+        </project>
+    </projects>
+</company>

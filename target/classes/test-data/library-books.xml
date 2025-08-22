@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<library name="Central Public Library" location="Downtown" established="1980">
+    <catalog>
+        <book isbn="978-0-7475-3269-9" genre="FANTASY" available="true">
+            <title>Harry Potter and the Philosopher's Stone</title>
+            <author>
+                <firstName>J.K.</firstName>
+                <lastName>Rowling</lastName>
+                <nationality>British</nationality>
+                <birthYear>1965</birthYear>
+            </author>
+            <publication>
+                <publisher>Bloomsbury</publisher>
+                <publicationDate>1997-06-26</publicationDate>
+                <edition>1st</edition>
+                <pages>223</pages>
+            </publication>
+            <classification>
+                <deweyDecimal>823.914</deweyDecimal>
+                <subject>Magic</subject>
+                <subject>Wizards</subject>
+                <subject>Schools</subject>
+            </classification>
+            <availability>
+                <totalCopies>5</totalCopies>
+                <availableCopies>3</availableCopies>
+                <reservedCopies>2</reservedCopies>
+            </availability>
+            <reviews>
+                <review rating="5" reviewer="BookReviewer1">Excellent introduction to the magical world</review>
+                <review rating="4" reviewer="BookReviewer2">Great for young readers</review>
+            </reviews>
+        </book>
+        <book isbn="978-0-06-112008-4" genre="FICTION" available="false">
+            <title>To Kill a Mockingbird</title>
+            <author>
+                <firstName>Harper</firstName>
+                <lastName>Lee</lastName>
+                <nationality>American</nationality>
+                <birthYear>1926</birthYear>
+            </author>
+            <publication>
+                <publisher>Harper Perennial</publisher>
+                <publicationDate>1960-07-11</publicationDate>
+                <edition>1st</edition>
+                <pages>281</pages>
+            </publication>
+            <classification>
+                <deweyDecimal>813.54</deweyDecimal>
+                <subject>Racial injustice</subject>
+                <subject>Coming of age</subject>
+                <subject>Southern United States</subject>
+            </classification>
+            <availability>
+                <totalCopies>3</totalCopies>
+                <availableCopies>0</availableCopies>
+                <reservedCopies>1</reservedCopies>
+            </availability>
+            <reviews>
+                <review rating="5" reviewer="BookReviewer3">Classic American literature</review>
+                <review rating="5" reviewer="BookReviewer4">Powerful and moving story</review>
+            </reviews>
+        </book>
+        <book isbn="978-0-14-028333-4" genre="SCIENCE_FICTION" available="true">
+            <title>1984</title>
+            <author>
+                <firstName>George</firstName>
+                <lastName>Orwell</lastName>
+                <nationality>British</nationality>
+                <birthYear>1903</birthYear>
+            </author>
+            <publication>
+                <publisher>Penguin Books</publisher>
+                <publicationDate>1949-06-08</publicationDate>
+                <edition>1st</edition>
+                <pages>328</pages>
+            </publication>
+            <classification>
+                <deweyDecimal>823.912</deweyDecimal>
+                <subject>Dystopia</subject>
+                <subject>Totalitarianism</subject>
+                <subject>Surveillance</subject>
+            </classification>
+            <availability>
+                <totalCopies>4</totalCopies>
+                <availableCopies>2</availableCopies>
+                <reservedCopies>0</reservedCopies>
+            </availability>
+            <reviews>
+                <review rating="4" reviewer="BookReviewer5">Disturbing but important</review>
+                <review rating="5" reviewer="BookReviewer6">Timeless classic</review>
+            </reviews>
+        </book>
+    </catalog>
+    <statistics>
+        <totalBooks>12</totalBooks>
+        <totalAuthors>10</totalAuthors>
+        <genres>
+            <genre name="FICTION" count="4"/>
+            <genre name="FANTASY" count="3"/>
+            <genre name="SCIENCE_FICTION" count="2"/>
+            <genre name="NON_FICTION" count="3"/>
+        </genres>
+        <circulation>
+            <month name="January" checkouts="156" returns="142"/>
+            <month name="February" checkouts="143" returns="138"/>
+            <month name="March" checkouts="167" returns="159"/>
+        </circulation>
+    </statistics>
+</library>

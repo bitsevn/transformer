@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<company>
+    <name>TechCorp Solutions</name>
+    <industry>Technology</industry>
+    <founded>2010</founded>
+    <employees>
+        <employee>
+            <id>EMP001</id>
+            <name>John Doe</name>
+            <position>Senior Developer</position>
+            <salary>85000</salary>
+            <department>
+                <deptId>DEV</deptId>
+                <deptName>Development</deptName>
+            </department>
+            <skills>
+                <skill>Java</skill>
+                <skill>Spring</skill>
+                <skill>XML</skill>
+            </skills>
+        </employee>
+        <employee>
+            <id>EMP002</id>
+            <name>Jane Smith</name>
+            <position>Product Manager</position>
+            <salary>95000</salary>
+            <department>
+                <deptId>PM</deptId>
+                <deptName>Product Management</deptName>
+            </department>
+            <skills>
+                <skill>Agile</skill>
+                <skill>Scrum</skill>
+                <skill>User Research</skill>
+            </skills>
+        </employee>
+        <employee>
+            <id>EMP003</id>
+            <name>Bob Johnson</name>
+            <position>DevOps Engineer</position>
+            <salary>90000</salary>
+            <department>
+                <deptId>OPS</deptId>
+                <deptName>Operations</deptName>
+            </department>
+            <skills>
+                <skill>Docker</skill>
+                <skill>Kubernetes</skill>
+                <skill>AWS</skill>
+            </skills>
+        </employee>
+    </employees>
+</company>

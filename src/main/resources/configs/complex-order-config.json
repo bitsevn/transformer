@@ -1,0 +1,191 @@
+{
+  "name": "Complex Order Configuration",
+  "version": "1.0",
+  "description": "Configuration for complex order XML to JSON transformation with deep nested structures",
+  "propertyMappings": [
+    {
+      "xmlPath": "order/@orderId",
+      "jsonPath": "orderNumber",
+      "dataType": "string",
+      "required": true
+    },
+    {
+      "xmlPath": "order/@orderType",
+      "jsonPath": "orderType",
+      "dataType": "string",
+      "required": false,
+      "transform": "uppercase"
+    },
+    {
+      "xmlPath": "order/@priority",
+      "jsonPath": "priorityLevel",
+      "dataType": "string",
+      "required": false,
+      "transform": "uppercase"
+    }
+  ],
+  "nestedPropertyMappings": [
+    {
+      "xmlPath": "order/customer",
+      "jsonPath": "customerInfo",
+      "properties": [
+        {
+          "xmlField": "customerId",
+          "jsonField": "customerNumber",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "personalInfo/firstName",
+          "jsonField": "firstName",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "personalInfo/lastName",
+          "jsonField": "lastName",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "personalInfo/email",
+          "jsonField": "emailAddress",
+          "dataType": "string",
+          "required": true,
+          "transform": "lowercase"
+        },
+        {
+          "xmlField": "personalInfo/phone",
+          "jsonField": "phoneNumber",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "personalInfo/dateOfBirth",
+          "jsonField": "birthDate",
+          "dataType": "date",
+          "required": false
+        }
+      ]
+    },
+    {
+      "xmlPath": "order/customer/addresses/address",
+      "jsonPath": "customerAddresses",
+      "properties": [
+        {
+          "xmlField": "@type",
+          "jsonField": "addressType",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "@primary",
+          "jsonField": "isPrimary",
+          "dataType": "boolean",
+          "required": false
+        },
+        {
+          "xmlField": "street",
+          "jsonField": "streetAddress",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "city",
+          "jsonField": "cityName",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "state",
+          "jsonField": "stateCode",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "zipCode",
+          "jsonField": "postalCode",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "country",
+          "jsonField": "countryCode",
+          "dataType": "string",
+          "required": false,
+          "defaultValue": "USA"
+        }
+      ]
+    },
+    {
+      "xmlPath": "order/items/item",
+      "jsonPath": "orderItems",
+      "properties": [
+        {
+          "xmlField": "@itemId",
+          "jsonField": "itemCode",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "@category",
+          "jsonField": "itemCategory",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "@brand",
+          "jsonField": "brandName",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "name",
+          "jsonField": "itemName",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "description",
+          "jsonField": "itemDescription",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "quantity",
+          "jsonField": "itemQuantity",
+          "dataType": "integer",
+          "required": true
+        },
+        {
+          "xmlField": "warranty",
+          "jsonField": "warrantyMonths",
+          "dataType": "integer",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "arrayMappings": {
+    "order/orderDetails": "orderSummary",
+    "order/financial": "financialSummary",
+    "order/tracking/updates/update": "orderUpdates"
+  },
+  "typeConversions": {
+    "string": "string",
+    "integer": "number",
+    "double": "number",
+    "boolean": "boolean",
+    "date": "string"
+  },
+  "defaultValues": {
+    "orderType": "ONLINE",
+    "priorityLevel": "MEDIUM",
+    "countryCode": "USA"
+  },
+  "transformations": {
+    "uppercase": "uppercase",
+    "lowercase": "lowercase",
+    "trim": "trim"
+  }
+}

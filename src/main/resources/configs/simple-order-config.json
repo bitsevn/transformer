@@ -1,0 +1,61 @@
+{
+  "name": "Simple Order Configuration",
+  "version": "1.0",
+  "description": "Configuration for simple order XML to JSON transformation",
+  "propertyMappings": [
+    {
+      "xmlPath": "order/orderId",
+      "jsonPath": "orderNumber",
+      "dataType": "string",
+      "required": true
+    },
+    {
+      "xmlPath": "order/customerName",
+      "jsonPath": "customer.fullName",
+      "dataType": "string",
+      "required": true
+    },
+    {
+      "xmlPath": "order/orderDate",
+      "jsonPath": "orderDetails.orderDate",
+      "dataType": "date",
+      "required": true
+    },
+    {
+      "xmlPath": "order/totalAmount",
+      "jsonPath": "financial.totalAmount",
+      "dataType": "double",
+      "required": true
+    },
+    {
+      "xmlPath": "order/currency",
+      "jsonPath": "financial.currency",
+      "dataType": "string",
+      "required": false,
+      "defaultValue": "USD"
+    },
+    {
+      "xmlPath": "order/status",
+      "jsonPath": "orderDetails.status",
+      "dataType": "string",
+      "required": false,
+      "defaultValue": "PENDING",
+      "transform": "uppercase"
+    }
+  ],
+  "typeConversions": {
+    "string": "string",
+    "integer": "number",
+    "double": "number",
+    "date": "string"
+  },
+  "defaultValues": {
+    "currency": "USD",
+    "status": "PENDING"
+  },
+  "transformations": {
+    "uppercase": "uppercase",
+    "lowercase": "lowercase",
+    "trim": "trim"
+  }
+}

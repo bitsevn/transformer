@@ -1,0 +1,108 @@
+{
+  "name": "Company Offices Configuration",
+  "version": "1.0",
+  "description": "Configuration for company offices XML to JSON transformation with nested property mapping",
+  "propertyMappings": [
+    {
+      "xmlPath": "company/name",
+      "jsonPath": "companyName",
+      "dataType": "string",
+      "required": true
+    },
+    {
+      "xmlPath": "company/industry",
+      "jsonPath": "businessType",
+      "dataType": "string",
+      "required": false
+    }
+  ],
+  "nestedPropertyMappings": [
+    {
+      "xmlPath": "company/offices/office",
+      "jsonPath": "officeLocations",
+      "properties": [
+        {
+          "xmlField": "officeId",
+          "jsonField": "locationId",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "address/street",
+          "jsonField": "streetAddress",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "address/city",
+          "jsonField": "cityName",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlField": "address/state",
+          "jsonField": "stateCode",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "address/zipCode",
+          "jsonField": "postalCode",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "address/postcode",
+          "jsonField": "postalCode",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "address/country",
+          "jsonField": "countryCode",
+          "dataType": "string",
+          "required": false,
+          "defaultValue": "USA"
+        },
+        {
+          "xmlField": "contact/phone",
+          "jsonField": "phoneNumber",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "contact/email",
+          "jsonField": "emailAddress",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlField": "capacity",
+          "jsonField": "maxCapacity",
+          "dataType": "integer",
+          "required": false
+        },
+        {
+          "xmlField": "timezone",
+          "jsonField": "timeZone",
+          "dataType": "string",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "typeConversions": {
+    "string": "string",
+    "integer": "number",
+    "double": "number"
+  },
+  "defaultValues": {
+    "businessType": "Software Development",
+    "countryCode": "USA"
+  },
+  "transformations": {
+    "uppercase": "uppercase",
+    "lowercase": "lowercase",
+    "trim": "trim"
+  }
+}
