@@ -27,6 +27,7 @@ import com.bitsevn.transformer.model.PropertyMapping;
 import com.bitsevn.transformer.model.TransformationConfig;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @Service
@@ -48,45 +49,61 @@ public class XmlToJsonTransformer {
         Document document = parseXml(xmlInput);
         ObjectNode rootNode = objectMapper.createObjectNode();
         
-        // Process property mappings
-        for (PropertyMapping mapping : config.getPropertyMappings()) {
-            Object value = extractValueFromXml(document, mapping, config);
-            if (value != null) {
-                setJsonValue(rootNode, mapping.getJsonPath(), value);
-            }
-        }
-        
-        // Handle arrays with enhanced property mapping support
-        if (config.getArrayMappings() != null) {
-            for (Map.Entry<String, String> arrayMapping : config.getArrayMappings().entrySet()) {
-                String xmlPath = arrayMapping.getKey();
-                String jsonPath = arrayMapping.getValue();
-                
-                // Check if this is a complex array mapping with property definitions
-                if (xmlPath.contains("|")) {
-                    // Complex array mapping with property definitions
-                    List<Object> arrayValues = extractComplexArrayFromXml(document, xmlPath, config);
-                    if (!arrayValues.isEmpty()) {
-                        setJsonValue(rootNode, jsonPath, arrayValues);
-                    }
-                } else {
-                    // Simple array mapping (existing behavior)
-                    List<Object> arrayValues = extractArrayFromXml(document, xmlPath, config);
-                    if (!arrayValues.isEmpty()) {
-                        setJsonValue(rootNode, jsonPath, arrayValues);
+        try {
+            // Process property mappings
+            if (config.getPropertyMappings() != null) {
+                for (PropertyMapping mapping : config.getPropertyMappings()) {
+                    Object value = extractValueFromXml(document, mapping, config);
+                    if (value != null) {
+                        setJsonValue(rootNode, mapping.getJsonPath(), value);
                     }
                 }
             }
-        }
-        
-        // Handle nested property mappings (new structured approach)
-        if (config.getNestedPropertyMappings() != null) {
-            for (NestedPropertyMapping nestedMapping : config.getNestedPropertyMappings()) {
-                List<Object> arrayValues = extractNestedPropertyArrayFromXml(document, nestedMapping, config);
-                if (!arrayValues.isEmpty()) {
-                    setJsonValue(rootNode, nestedMapping.getJsonPath(), arrayValues);
+            
+            // Handle arrays with enhanced property mapping support
+            if (config.getArrayMappings() != null) {
+                for (Map.Entry<String, String> arrayMapping : config.getArrayMappings().entrySet()) {
+                    String xmlPath = arrayMapping.getKey();
+                    String jsonPath = arrayMapping.getValue();
+                    
+                    try {
+                        // Check if this is a complex array mapping with property definitions
+                        if (xmlPath.contains("|")) {
+                            // Complex array mapping with property definitions
+                            List<Object> arrayValues = extractComplexArrayFromXml(document, xmlPath, config);
+                            if (!arrayValues.isEmpty()) {
+                                setJsonValue(rootNode, jsonPath, arrayValues);
+                            }
+                        } else {
+                            // Simple array mapping (existing behavior)
+                            List<Object> arrayValues = extractArrayFromXml(document, xmlPath, config);
+                            if (!arrayValues.isEmpty()) {
+                                setJsonValue(rootNode, jsonPath, arrayValues);
+                            }
+                        }
+                    } catch (Exception e) {
+                        // Log error but continue processing other mappings
+                        System.err.println("Error processing array mapping " + xmlPath + ": " + e.getMessage());
+                    }
                 }
             }
+            
+            // Handle nested property mappings (new structured approach)
+            if (config.getNestedPropertyMappings() != null) {
+                for (NestedPropertyMapping nestedMapping : config.getNestedPropertyMappings()) {
+                    try {
+                        List<Object> arrayValues = extractNestedPropertyArrayFromXml(document, nestedMapping, config);
+                        if (!arrayValues.isEmpty()) {
+                            setJsonValue(rootNode, nestedMapping.getJsonPath(), arrayValues);
+                        }
+                    } catch (Exception e) {
+                        // Log error but continue processing other mappings
+                        System.err.println("Error processing nested property mapping " + nestedMapping.getXmlPath() + ": " + e.getMessage());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new Exception("Error during XML to JSON transformation: " + e.getMessage(), e);
         }
         
         return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(rootNode);
@@ -103,17 +120,21 @@ public class XmlToJsonTransformer {
             // Split the path into XML path and property mappings
             String[] parts = complexXmlPath.split("\\|");
             if (parts.length != 2) {
+                System.err.println("Invalid complex XML path format: " + complexXmlPath);
                 return arrayValues;
             }
             
             String xmlPath = parts[0];
             String propertyMappings = parts[1];
             
+            System.out.println("DEBUG: Processing complex array path: " + xmlPath + " with mappings: " + propertyMappings);
+            
             // Parse property mappings (format: "prop1:jsonProp1,prop2:jsonProp2")
             Map<String, String> propMappings = parsePropertyMappings(propertyMappings);
             
             // Get array elements
             NodeList nodes = evaluateXPath(document, xmlPath);
+            System.out.println("DEBUG: Found " + nodes.getLength() + " nodes for complex path: " + xmlPath);
             
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
@@ -124,8 +145,10 @@ public class XmlToJsonTransformer {
                     }
                 }
             }
+            
+            System.out.println("DEBUG: Created " + arrayValues.size() + " mapped objects for complex path: " + xmlPath);
         } catch (Exception e) {
-            // Log error
+            System.err.println("Error extracting complex array from XML path " + complexXmlPath + ": " + e.getMessage());
         }
         
         return arrayValues;
@@ -278,12 +301,35 @@ public class XmlToJsonTransformer {
     }
     
     /**
+     * Extract all elements with the same name as an array
+     * Useful for explicit array mapping scenarios
+     */
+    private List<Object> extractAllElementsByName(Document document, String elementName, TransformationConfig config) {
+        List<Object> elements = new ArrayList<>();
+        try {
+            NodeList nodes = document.getElementsByTagName(elementName);
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node node = nodes.item(i);
+                Object value = extractNodeValue(node, config);
+                if (value != null) {
+                    elements.add(value);
+                }
+            }
+        } catch (Exception e) {
+            // Log error
+        }
+        return elements;
+    }
+
+    /**
      * Extract array values from XML (simple array handling)
      */
     private List<Object> extractArrayFromXml(Document document, String xmlPath, TransformationConfig config) {
         List<Object> arrayValues = new ArrayList<>();
         try {
             NodeList nodes = evaluateXPath(document, xmlPath);
+            System.out.println("DEBUG: Found " + nodes.getLength() + " nodes for path: " + xmlPath);
+            
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
                 Object value = extractNodeValue(node, config);
@@ -291,8 +337,9 @@ public class XmlToJsonTransformer {
                     arrayValues.add(value);
                 }
             }
+            System.out.println("DEBUG: Extracted " + arrayValues.size() + " values for path: " + xmlPath);
         } catch (Exception e) {
-            // Log error
+            System.err.println("Error extracting array from XML path " + xmlPath + ": " + e.getMessage());
         }
         return arrayValues;
     }
@@ -304,7 +351,11 @@ public class XmlToJsonTransformer {
         List<Object> arrayValues = new ArrayList<>();
         try {
             String xmlPath = nestedMapping.getXmlPath();
+            System.out.println("DEBUG: Processing nested property array path: " + xmlPath);
+            
             NodeList nodes = evaluateXPath(document, xmlPath);
+            System.out.println("DEBUG: Found " + nodes.getLength() + " nodes for nested property path: " + xmlPath);
+            
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node node = nodes.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -314,8 +365,10 @@ public class XmlToJsonTransformer {
                     }
                 }
             }
+            
+            System.out.println("DEBUG: Created " + arrayValues.size() + " mapped objects for nested property path: " + xmlPath);
         } catch (Exception e) {
-            // Log error
+            System.err.println("Error extracting nested property array from XML path " + nestedMapping.getXmlPath() + ": " + e.getMessage());
         }
         return arrayValues;
     }
@@ -358,6 +411,7 @@ public class XmlToJsonTransformer {
     
     /**
      * Extract value from a single XML node
+     * Enhanced to better handle complex elements and preserve structure
      */
     private Object extractNodeValue(Node node, TransformationConfig config) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -375,7 +429,21 @@ public class XmlToJsonTransformer {
                             String childName = child.getNodeName();
                             Object childValue = extractNodeValue(child, config);
                             if (childValue != null) {
-                                objectNode.put(childName, childValue.toString());
+                                // Handle arrays - if we have multiple children with the same name
+                                if (objectNode.has(childName)) {
+                                    // Convert to array if we encounter duplicate names
+                                    if (objectNode.get(childName).isArray()) {
+                                        ((ArrayNode) objectNode.get(childName)).add(objectMapper.valueToTree(childValue));
+                                    } else {
+                                        // Convert existing single value to array
+                                        ArrayNode arrayNode = objectMapper.createArrayNode();
+                                        arrayNode.add(objectNode.get(childName));
+                                        arrayNode.add(objectMapper.valueToTree(childValue));
+                                        objectNode.set(childName, arrayNode);
+                                    }
+                                } else {
+                                    objectNode.set(childName, objectMapper.valueToTree(childValue));
+                                }
                             }
                         }
                     }
@@ -528,6 +596,7 @@ public class XmlToJsonTransformer {
     
     /**
      * Simple XPath evaluation (for basic path expressions)
+     * Now properly handles array scenarios by returning all matching elements
      */
     private NodeList evaluateXPath(Document document, String xpath) {
         // This is a simplified XPath implementation
@@ -539,7 +608,14 @@ public class XmlToJsonTransformer {
         String[] pathParts = xpath.split("/");
         Node currentNode = document;
         
-        for (String part : pathParts) {
+        // If this is a simple path (no array indexing), return all matching elements
+        if (pathParts.length == 1 && !pathParts[0].contains("[")) {
+            return getChildElements(currentNode, pathParts[0]);
+        }
+        
+        // For complex paths, navigate to the parent and return all children
+        for (int i = 0; i < pathParts.length - 1; i++) {
+            String part = pathParts[i];
             if (part.isEmpty()) continue;
             
             if (part.contains("[")) {
@@ -564,18 +640,48 @@ public class XmlToJsonTransformer {
             }
         }
         
-        return new SingleNodeList(currentNode);
+        // For the last part, return all matching elements if no indexing
+        String lastPart = pathParts[pathParts.length - 1];
+        if (lastPart.contains("[")) {
+            // Handle array indexing for the last part
+            String elementName = lastPart.substring(0, lastPart.indexOf("["));
+            String indexStr = lastPart.substring(lastPart.indexOf("[") + 1, lastPart.indexOf("]"));
+            int index = Integer.parseInt(indexStr);
+            
+            NodeList children = getChildElements(currentNode, elementName);
+            if (children.getLength() > index) {
+                return new SingleNodeList(children.item(index));
+            } else {
+                return new EmptyNodeList();
+            }
+        } else {
+            // Return all matching elements for array processing
+            return getChildElements(currentNode, lastPart);
+        }
     }
     
     /**
      * Get child elements by tag name
+     * Enhanced to properly find all matching children within a specific context
      */
     private NodeList getChildElements(Node parent, String tagName) {
         if (parent.getNodeType() == Node.DOCUMENT_NODE) {
             return ((Document) parent).getElementsByTagName(tagName);
         } else if (parent.getNodeType() == Node.ELEMENT_NODE) {
             Element element = (Element) parent;
-            return element.getElementsByTagName(tagName);
+            // Use getElementsByTagName to get all descendants, then filter to direct children
+            NodeList allDescendants = element.getElementsByTagName(tagName);
+            List<Node> directChildren = new ArrayList<>();
+            
+            for (int i = 0; i < allDescendants.getLength(); i++) {
+                Node descendant = allDescendants.item(i);
+                // Check if this is a direct child of the current element
+                if (descendant.getParentNode() == element) {
+                    directChildren.add(descendant);
+                }
+            }
+            
+            return new DynamicNodeList(directChildren);
         }
         return new EmptyNodeList();
     }
@@ -605,6 +711,27 @@ public class XmlToJsonTransformer {
         @Override
         public int getLength() {
             return 1;
+        }
+    }
+    
+    /**
+     * Dynamic NodeList implementation for handling variable-sized collections
+     */
+    private static class DynamicNodeList implements NodeList {
+        private final List<Node> nodes;
+        
+        public DynamicNodeList(List<Node> nodes) {
+            this.nodes = nodes;
+        }
+        
+        @Override
+        public Node item(int index) {
+            return (index >= 0 && index < nodes.size()) ? nodes.get(index) : null;
+        }
+        
+        @Override
+        public int getLength() {
+            return nodes.size();
         }
     }
 }

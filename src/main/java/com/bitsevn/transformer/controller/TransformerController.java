@@ -1,19 +1,16 @@
 package com.bitsevn.transformer.controller;
 
-import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.bitsevn.transformer.model.TransformationConfig;
 import com.bitsevn.transformer.service.ConfigurationService;
 import com.bitsevn.transformer.service.MongoConfigurationService;
 import com.bitsevn.transformer.service.XmlToJsonTransformer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -28,6 +25,8 @@ public class TransformerController {
     @Autowired
     private MongoConfigurationService mongoConfigurationService;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     /**
      * Transform XML to JSON using a named configuration from files
      */
@@ -38,7 +37,7 @@ public class TransformerController {
         try {
             TransformationConfig config = configurationService.loadConfiguration(configName);
             String jsonOutput = transformer.transformXmlToJson(xmlInput, config);
-            return ResponseEntity.ok(Map.of("result", jsonOutput));
+            return ResponseEntity.ok(Map.of("result", objectMapper.readValue(jsonOutput, LinkedHashMap.class)));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", "Transformation failed: " + e.getMessage()));
