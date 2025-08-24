@@ -1,239 +1,175 @@
-# XML to JSON Transformation Configuration Files
+# Unified XML to JSON Transformation Configuration Files
 
-This directory contains configuration files for transforming various XML test data files to JSON using the XML to JSON Transformer service.
+This directory contains configuration files for transforming XML data to JSON using the new unified transformation system.
 
 ## Configuration Files Overview
 
-### 1. `simple-person-config.json`
-**Purpose**: Transform simple person XML data
-**Test Data**: `../test-data/simple-person.xml`
+### `unified-company-employees-config.json`
+**Purpose**: Transform company employee data using the new unified hierarchical mapping system
+**Test Data**: `../test-data/company-employees-test.xml`
 **Features**:
-- Basic property mapping with different names
-- Data type conversion (string, integer, boolean, date)
-- Transformation rules (lowercase for email)
-- Default values for optional fields
+- Hierarchical nested mappings with children
+- Support for single values, arrays, and structured objects
+- Unlimited levels of nesting
+- Consistent mapping properties at all levels
 
 **Key Mappings**:
-- `person/name` → `fullName`
-- `person/email` → `emailAddress` (with lowercase transform)
-- `person/active` → `isActive`
-- `person/salary` → `annualSalary`
+- **Company Info**: `company/name` → `companyName` (single)
+- **Employees Array**: `company/employees/employee` → `mappedEmployees` (array with children)
+  - `id` → `employeeId` (single)
+  - `name` → `fullName` (single with trim transform)
+  - `department` → `departmentInfo` (object with children)
+    - `deptId` → `deptCode` (single)
+    - `deptName` → `departmentName` (single)
+  - `skills` → `employeeSkills` (array with children)
+    - `skill` → `skillName` (single)
+- **Departments Array**: `company/departments/department` → `departments` (array with children)
+  - `manager` → `managerInfo` (object with children)
+    - `name` → `managerName` (single)
+    - `email` → `managerEmail` (single)
 
-### 2. `simple-order-config.json`
-**Purpose**: Transform simple order XML data
-**Test Data**: `../test-data/simple-order.xml`
-**Features**:
-- Nested JSON structure creation
-- Business logic grouping
-- Default values for business rules
+## New Unified Configuration Structure
 
-**Key Mappings**:
-- `order/orderId` → `orderNumber`
-- `order/customerName` → `customer.fullName`
-- `order/totalAmount` → `financial.totalAmount`
-- `order/status` → `orderDetails.status` (with uppercase transform)
+### Mapping Types
 
-### 3. `company-employees-config.json`
-**Purpose**: Transform company employee data with array handling
-**Test Data**: `../test-data/company-employees.xml`
-**Features**:
-- Multiple array mapping approaches
-- Both inline and readable nested property mappings
-- Complex nested structure handling
+1. **Single Mappings** (`"type": "single"`)
+   - Extract simple values from XML
+   - Support data type conversion
+   - Can apply transformations
+   - Example: `company/name` → `companyName`
 
-**Key Mappings**:
-- **Inline**: `company/employees/employee|id:employeeId,name:fullName,position:jobTitle,salary:annualSalary` → `mappedEmployees`
-- **Readable**: Detailed employee mapping with department information
-- **Simple**: `company/employees/employee` → `allEmployees`
-- **Skills**: `company/employees/employee/skills/skill` → `allSkills`
+2. **Array Mappings** (`"type": "array"`)
+   - Handle collections of XML elements
+   - Set `"isArray": true` for array processing
+   - Can contain children for structured arrays
+   - Example: `company/employees/employee` → `employees`
 
-### 4. `company-offices-config.json`
-**Purpose**: Transform company office location data
-**Test Data**: `../test-data/company-offices.xml`
-**Features**:
-- Complex nested property mapping
-- International address handling
-- Contact information mapping
+3. **Object Mappings** (`"type": "object"`)
+   - Create structured JSON objects
+   - Must contain children for field definitions
+   - Support nested hierarchies
+   - Example: `department` → `departmentInfo`
 
-**Key Mappings**:
-- `company/offices/office` → `officeLocations`
-- `address/street` → `streetAddress`
-- `address/city` → `cityName`
-- `contact/phone` → `phoneNumber`
-- `capacity` → `maxCapacity`
+### Hierarchical Children
 
-### 5. `company-projects-config.json`
-**Purpose**: Transform company project data with attribute extraction
-**Test Data**: `../test-data/company-projects.xml`
-**Features**:
-- XML attribute extraction
-- Project metadata mapping
-- Team and technology arrays
+Instead of flat field mappings, the new system uses hierarchical children:
 
-**Key Mappings**:
-- **Attributes**: `@projectId` → `projectCode`, `@status` → `projectStatus`
-- **Inline**: `company/projects/project|projectId:projectCode,status:projectStatus,priority:priorityLevel` → `projectSummary`
-- **Nested**: Detailed project information with dates and budgets
-
-### 6. `complex-order-config.json`
-**Purpose**: Transform complex e-commerce order data
-**Test Data**: `../test-data/complex-order.xml`
-**Features**:
-- Deep nested structure mapping
-- XML attribute extraction
-- Complex business object transformation
-- Multiple address types
-
-**Key Mappings**:
-- **Root Attributes**: `@orderId` → `orderNumber`, `@orderType` → `orderType`
-- **Customer**: Complex customer structure with personal info and addresses
-- **Items**: Product information with specifications and pricing
-- **Addresses**: Billing and shipping address handling
-
-### 7. `library-books-config.json`
-**Purpose**: Transform library catalog data
-**Test Data**: `../test-data/library-books.xml`
-**Features**:
-- Complex metadata handling
-- Classification system mapping
-- Author and publication information
-- Availability tracking
-
-**Key Mappings**:
-- **Root Attributes**: `@name` → `libraryName`, `@established` → `establishedYear`
-- **Books**: Comprehensive book information with authors, publishers, and classification
-- **Arrays**: Subjects, reviews, genre statistics, and circulation data
-
-## Usage Examples
-
-### Basic Transformation
-```bash
-# Transform simple person data
-curl -X POST http://localhost:8080/api/transform/simple-person-config \
-  -H "Content-Type: text/plain" \
-  -d @../test-data/simple-person.xml
+```json
+{
+  "xmlPath": "company/employees/employee",
+  "jsonPath": "mappedEmployees",
+  "type": "array",
+  "isArray": true,
+  "children": [
+    {
+      "xmlPath": "id",
+      "jsonPath": "employeeId",
+      "type": "single"
+    },
+    {
+      "xmlPath": "department",
+      "jsonPath": "departmentInfo",
+      "type": "object",
+      "children": [
+        {
+          "xmlPath": "deptId",
+          "jsonPath": "deptCode",
+          "type": "single"
+        }
+      ]
+    }
+  ]
+}
 ```
 
-### Array Mapping
-```bash
-# Transform company employees with array handling
-curl -X POST http://localhost:8080/api/transform/company-employees-config \
-  -H "Content-Type: text/plain" \
-  -d @../test-data/company-employees.xml
+### Benefits of the New Structure
+
+1. **True Nesting**: Support for unlimited levels of nesting
+2. **Consistent Interface**: Same mapping properties at all levels
+3. **Flexible Organization**: Group related mappings logically
+4. **Easier Maintenance**: Clear hierarchy makes configurations easier to understand
+5. **Reusable Patterns**: Common mapping patterns can be defined once and reused
+
+### Configuration Properties
+
+Each mapping supports these properties:
+- **xmlPath**: XML element path (e.g., `company/name`)
+- **jsonPath**: JSON output path (e.g., `companyName`)
+- **type**: Mapping type (`single`, `array`, `object`)
+- **isArray**: Boolean flag for array processing
+- **children**: List of nested mappings
+- **dataType**: Target data type (`string`, `integer`, `boolean`, etc.)
+- **required**: Required field flag
+- **defaultValue**: Field-specific default value
+- **transform**: Transformation to apply
+- **description**: Field description
+
+### Global Configuration
+
+- **transformations**: Global transformation rules
+- **defaultValues**: Global default values
+- **metadata**: Additional configuration metadata
+
+## Migration from Old System
+
+The old three-mapping system has been replaced:
+- **Before**: `propertyMappings`, `arrayMappings`, `nestedPropertyMappings`
+- **After**: Single `unifiedMappings` array with hierarchical children
+
+### Old vs New Structure
+
+**Old (Flat Fields)**:
+```json
+{
+  "xmlPath": "company/employees/employee",
+  "jsonPath": "mappedEmployees",
+  "type": "array",
+  "fields": [
+    {"xmlField": "id", "jsonField": "employeeId"},
+    {"xmlField": "name", "jsonField": "fullName"}
+  ]
+}
 ```
 
-### Complex Nested Structures
-```bash
-# Transform complex order data
-curl -X POST http://localhost:8080/api/transform/complex-order-config \
-  -H "Content-Type: text/plain" \
-  -d @../test-data/complex-order.xml
+**New (Hierarchical Children)**:
+```json
+{
+  "xmlPath": "company/employees/employee",
+  "jsonPath": "mappedEmployees",
+  "type": "array",
+  "isArray": true,
+  "children": [
+    {
+      "xmlPath": "id",
+      "jsonPath": "employeeId",
+      "type": "single"
+    },
+    {
+      "xmlPath": "name",
+      "jsonPath": "fullName",
+      "type": "single"
+    }
+  ]
+}
 ```
 
-## Configuration Patterns
+## File Structure
 
-### 1. Property Name Differences
-All configurations demonstrate how XML property names can differ from JSON property names:
-- `person/name` → `fullName`
-- `order/orderId` → `orderNumber`
-- `company/industry` → `businessType`
+- **Configuration Files**: JSON files with unified mapping structure
+- **Test Data**: XML files for testing transformations
+- **Documentation**: This README and related guides
 
-### 2. Depth Differences
-Configurations show how to map XML depth to different JSON structures:
-- **Flat to Nested**: `order/customerName` → `customer.fullName`
-- **Nested to Flat**: `company/employees/employee/name` → `fullName`
-- **Complex Nesting**: `order/customer/addresses/address/street` → `streetAddress`
+## Usage
 
-### 3. Array Handling
-Multiple approaches for array transformation:
-- **Simple**: Extract entire elements
-- **Inline**: Property-to-property mapping with pipe syntax
-- **Readable**: Structured nested property mapping
+1. **Create Configuration**: Define your unified mappings in a JSON file
+2. **Place in Configs**: Put the file in this `configs/` directory
+3. **Use in Application**: Reference by filename (without .json extension)
+4. **Transform XML**: Use the `UnifiedXmlToJsonTransformer` service
 
-### 4. Attribute Extraction
-XML attributes are mapped using `@` prefix:
-- `@orderId` → `orderNumber`
-- `@isbn` → `isbn`
-- `@status` → `projectStatus`
+## Future Enhancements
 
-### 5. Data Type Conversion
-Automatic type conversion with explicit data types:
-- `string`, `integer`, `double`, `boolean`, `date`
-- Default values for missing data
-- Transformation rules (uppercase, lowercase, trim)
-
-## Testing Strategy
-
-### 1. Start Simple
-Begin with `simple-person-config.json` to validate basic functionality:
-- Property mapping
-- Data type conversion
-- Transformation rules
-
-### 2. Progress to Arrays
-Move to `company-employees-config.json` for array handling:
-- Simple array extraction
-- Inline property mapping
-- Readable nested mapping
-
-### 3. Test Complex Structures
-Use `complex-order-config.json` for advanced scenarios:
-- Deep nesting
-- Attribute extraction
-- Complex business objects
-
-### 4. Validate Edge Cases
-Test with modified XML data:
-- Missing elements
-- Empty arrays
-- Invalid data types
-
-## Configuration Best Practices
-
-### 1. Naming Conventions
-- Use descriptive JSON property names
-- Group related properties logically
-- Maintain consistency across configurations
-
-### 2. Data Type Handling
-- Specify explicit data types for validation
-- Use appropriate default values
-- Handle missing data gracefully
-
-### 3. Transformation Rules
-- Apply transformations consistently
-- Use uppercase for status fields
-- Use lowercase for email addresses
-- Trim whitespace for text fields
-
-### 4. Array Mapping
-- Choose the right approach for your use case
-- Use inline mapping for simple scenarios
-- Use readable mapping for complex scenarios
-- Consider performance for large arrays
-
-### 5. Error Handling
-- Mark required fields appropriately
-- Provide meaningful default values
-- Handle missing nested structures
-
-## Performance Considerations
-
-- **Simple mappings** are fastest for basic transformations
-- **Inline array mapping** is efficient for property conversion
-- **Readable nested mapping** provides clarity but may be slower
-- **Deep nesting** can impact performance with large XML files
-
-## Troubleshooting
-
-### Common Issues
-1. **Missing elements**: Check required field settings
-2. **Data type errors**: Verify data type specifications
-3. **Array mapping failures**: Check array mapping syntax
-4. **Nested path errors**: Validate XML path expressions
-
-### Debug Tips
-- Enable debug logging in application.properties
-- Test with smaller XML samples first
-- Validate configuration JSON syntax
-- Check XML path expressions carefully
+- **Schema Validation**: JSON schema validation for configurations
+- **Template Library**: Pre-built configuration templates
+- **Visual Editor**: GUI for creating and editing configurations
+- **Version Control**: Configuration versioning and rollback
+- **Testing Framework**: Automated configuration testing

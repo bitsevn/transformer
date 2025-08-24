@@ -1,164 +1,115 @@
 # Configuration Services
 
-This directory contains two configuration services for the XML to JSON Transformer:
+This directory contains the unified configuration service for the XML to JSON Transformer.
 
-## 1. ConfigurationService (File-based)
+## ConfigurationService (Unified)
 
-The original file-based configuration service that reads configurations from JSON files in the `configs/` directory.
+The unified configuration service that reads configurations from JSON files in the `configs/` directory and supports the new hierarchical mapping structure.
 
 **Features:**
-- Loads configurations from classpath JSON files
+- Loads unified configurations from classpath JSON files
 - In-memory caching for performance
-- Simple file-based storage
+- Support for hierarchical nested mappings
+- Automatic .json extension handling
+- Type-safe configuration models
+
+**Configuration Structure:**
+The service now uses `UnifiedTransformationConfig` which supports:
+- **Single Mappings**: Simple value extraction
+- **Array Mappings**: Collection of elements
+- **Object Mappings**: Structured objects with children
+- **Nested Children**: Unlimited levels of nesting
 
 **Usage:**
 ```java
 @Autowired
 private ConfigurationService configurationService;
 
-TransformationConfig config = configurationService.loadConfiguration("simple-person-config");
+// Load unified configuration
+UnifiedTransformationConfig config = configurationService.loadUnifiedConfiguration("unified-company-employees-config");
+
+// Load with automatic .json extension handling
+UnifiedTransformationConfig config = configurationService.loadUnifiedConfigurationAuto("unified-company-employees-config");
+
+// Load from JSON string
+UnifiedTransformationConfig config = configurationService.loadUnifiedConfigurationFromJson(jsonString);
 ```
 
-## 2. MongoConfigurationService (MongoDB-based)
-
-A new MongoDB-based configuration service that stores and retrieves configurations from a MongoDB database.
-
-**Features:**
-- MongoDB persistence for configurations
-- Advanced querying capabilities
-- In-memory caching with MongoDB sync
-- CRUD operations for configurations
-- Search by various criteria
-
-**Prerequisites:**
-- MongoDB instance running (default: localhost:27017)
-- Database: `transformer`
-- Collection: `transformation_configs`
-
-**Configuration:**
-```properties
-# application.properties
-spring.data.mongodb.host=localhost
-spring.data.mongodb.port=27017
-spring.data.mongodb.database=transformer
-spring.data.mongodb.auto-index-creation=true
-```
-
-**Usage:**
-```java
-@Autowired
-private MongoConfigurationService mongoConfigService;
-
-// Load configuration by name
-TransformationConfig config = mongoConfigService.loadConfiguration("simple-person-config");
-
-// Save new configuration
-TransformationConfig newConfig = new TransformationConfig();
-newConfig.setName("new-config");
-newConfig.setVersion("1.0");
-mongoConfigService.saveConfiguration(newConfig);
-
-// Find configurations by criteria
-List<TransformationConfig> configs = mongoConfigService.findConfigurationsByVersion("1.0");
-List<TransformationConfig> arrayConfigs = mongoConfigService.findConfigurationsWithArrayMappings();
-
-// Update configuration
-mongoConfigService.updateConfiguration("config-name", updatedConfig);
-
-// Delete configuration
-mongoConfigService.deleteConfiguration("config-name");
-```
-
-**Advanced Querying:**
-```java
-// Find configurations with specific XML path patterns
-List<TransformationConfig> personConfigs = mongoConfigService
-    .findConfigurationsByXmlPathPattern("person/.*");
-
-// Find configurations with nested property mappings
-List<TransformationConfig> nestedConfigs = mongoConfigService
-    .findConfigurationsWithNestedMappings();
-
-// Find configurations by description
-List<TransformationConfig> descConfigs = mongoConfigService
-    .findConfigurationsByDescription("employee");
+**Configuration File Format:**
+```json
+{
+  "name": "Configuration Name",
+  "version": "2.0",
+  "description": "Description",
+  "unifiedMappings": [
+    {
+      "xmlPath": "company/name",
+      "jsonPath": "companyName",
+      "type": "single",
+      "dataType": "string"
+    },
+    {
+      "xmlPath": "company/employees/employee",
+      "jsonPath": "employees",
+      "type": "array",
+      "isArray": true,
+      "children": [
+        {
+          "xmlPath": "id",
+          "jsonPath": "employeeId",
+          "type": "single"
+        },
+        {
+          "xmlPath": "department",
+          "jsonPath": "deptInfo",
+          "type": "object",
+          "children": [...]
+        }
+      ]
+    }
+  ],
+  "transformations": {...},
+  "defaultValues": {...}
+}
 ```
 
 **Caching:**
 ```java
 // Cache management
-mongoConfigService.clearCache();
-mongoConfigService.refreshConfiguration("config-name");
-mongoConfigService.refreshAllConfigurations();
+configurationService.clearCache();
+configurationService.removeCachedUnifiedConfiguration("config-name");
 
 // Get cached configurations
-List<String> cachedNames = mongoConfigService.getCachedConfigurationNames();
-TransformationConfig cached = mongoConfigService.getCachedConfiguration("config-name");
+List<String> cachedNames = configurationService.getCachedUnifiedConfigurationNames();
+UnifiedTransformationConfig cached = configurationService.getCachedUnifiedConfiguration("config-name");
 ```
 
-## Migration from File-based to MongoDB
+**Validation:**
+```java
+// Check if configuration exists
+boolean exists = configurationService.unifiedConfigurationExists("config-name");
 
-To migrate existing configurations:
-
-1. **Start MongoDB service**
-2. **Load existing configurations:**
-   ```java
-   // Load from file service
-   TransformationConfig config = fileConfigService.loadConfiguration("config-name");
-   
-   // Save to MongoDB
-   mongoConfigService.saveConfiguration(config);
-   ```
-
-3. **Switch to MongoDB service:**
-   ```java
-   // Change from
-   @Autowired
-   private ConfigurationService configurationService;
-   
-   // To
-   @Autowired
-   private MongoConfigurationService configurationService;
-   ```
-
-## MongoDB Schema
-
-The `transformation_configs` collection stores documents with this structure:
-
-```json
-{
-  "_id": "ObjectId",
-  "name": "simple-person-config",
-  "version": "1.0",
-  "description": "Configuration for simple person XML to JSON transformation",
-  "propertyMappings": [...],
-  "arrayMappings": {...},
-  "nestedPropertyMappings": [...],
-  "typeConversions": {...},
-  "defaultValues": {...},
-  "transformations": {...}
-}
+// Convert between formats (for backward compatibility)
+Map<String, Object> configMap = configurationService.convertToMap(unifiedConfig);
+UnifiedTransformationConfig unifiedConfig = configurationService.convertFromMap(configMap);
 ```
 
-## Performance Considerations
+## Benefits of the New Unified Approach
 
-- **Caching**: Both services use in-memory caching for frequently accessed configurations
-- **MongoDB Queries**: Use repository methods for better performance than raw queries
-- **Indexing**: MongoDB automatically creates indexes on `_id` and `name` fields
-- **Connection Pooling**: Spring Boot manages MongoDB connection pooling
+1. **Hierarchical Structure**: Support for unlimited levels of nesting
+2. **Consistent Interface**: Same mapping properties at all levels
+3. **Type Safety**: Strongly-typed configuration models
+4. **Better Organization**: Logical grouping of related mappings
+5. **Easier Maintenance**: Clear hierarchy makes configurations easier to understand
+6. **Flexible Mapping**: Support for single values, arrays, and structured objects
 
-## Error Handling
+## Migration from Old System
 
-Both services handle errors gracefully:
-- Return `null` for missing configurations
-- Return empty lists for failed queries
-- Log errors to console (can be enhanced with proper logging framework)
-- Cache failures don't affect subsequent operations
+The old three-mapping system (propertyMappings, arrayMappings, nestedPropertyMappings) has been replaced with a single unified structure. All configurations now use the `UnifiedTransformationConfig` model with hierarchical children instead of flat fields.
 
-## Future Enhancements
+## File Structure
 
-- **Audit Trail**: Track configuration changes and versions
-- **Validation**: Schema validation for configuration documents
-- **Encryption**: Sensitive configuration data encryption
-- **Backup/Restore**: Configuration backup and restore functionality
-- **Multi-tenancy**: Support for multiple organizations/tenants
+- **Configuration Files**: Located in `src/main/resources/configs/`
+- **Model Classes**: `UnifiedTransformationConfig` with nested `UnifiedMapping` classes
+- **Service**: `ConfigurationService` for loading and caching configurations
+- **Repository**: `TransformationConfigRepository` for MongoDB persistence (if needed)

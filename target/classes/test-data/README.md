@@ -1,218 +1,255 @@
-# Test XML Files for XML to JSON Transformer
+# Test XML Files for Unified XML to JSON Transformer
 
-This directory contains various XML test files to help test different scenarios of the XML to JSON transformation service.
+This directory contains XML test files for testing the new unified transformation system with hierarchical mapping support.
 
-## Simple XML Files
+## Test XML Files
 
-### 1. `simple-person.xml`
-**Purpose**: Basic property mapping testing
+### `unified-company-employees-config.xml`
+**Purpose**: Comprehensive testing of the unified hierarchical mapping system
 **Features**: 
-- Simple flat structure
-- Different data types (string, integer, boolean, date)
-- No nested elements or arrays
+- Company information with employees, departments, addresses, and contacts
+- Complex nested structures for testing hierarchical children
+- Multiple array types with different nesting levels
+- Rich metadata for comprehensive testing
+
+**Structure**:
+```
+company
+├── name, industry, founded (basic info)
+├── employees (array)
+│   └── employee
+│       ├── id, name, position, salary
+│       ├── department (nested object)
+│       │   ├── deptId, deptName
+│       └── skills (array)
+│           └── skill
+├── departments (array)
+│   └── department
+│       ├── deptId, deptName
+│       └── manager (nested object)
+│           ├── name, email
+├── addresses (array)
+│   └── address
+│       ├── type, street, city, state, zip
+├── contacts (array)
+│   └── contact
+│       ├── type, value, primary
+└── metadata
+    ├── lastUpdated, version, active
+    ├── employeeCount, departmentCount
+    ├── totalRevenue, foundedLocation
+```
 
 **Use Cases**:
-- Basic property mapping validation
-- Data type conversion testing
-- Simple transformation rules
-
-### 2. `simple-order.xml`
-**Purpose**: Basic order structure testing
-**Features**:
-- Simple order information
-- Different data types
-- Flat structure
-
-**Use Cases**:
-- Basic order processing
-- Simple property mapping
-- Data validation
-
-## Medium Complexity XML Files
-
-### 3. `company-employees.xml`
-**Purpose**: Array mapping testing
-**Features**:
-- Company information
-- Employee array with nested structures
-- Skills arrays
-- Department information
-
-**Use Cases**:
-- Array mapping with property conversion
-- Nested property extraction
-- Multiple array handling
-- Complex object mapping within arrays
-
-### 4. `company-offices.xml`
-**Purpose**: Nested property mapping testing
-**Features**:
-- Office locations with addresses
-- Contact information
-- Capacity and timezone data
-- International addresses
-
-**Use Cases**:
-- Nested path navigation
-- Address structure mapping
-- International data handling
-- Complex nested property extraction
-
-### 5. `company-projects.xml`
-**Purpose**: Attribute extraction and complex mapping testing
-**Features**:
-- Project information with attributes
-- Team member arrays
-- Technology arrays
-- Project status and priority
-
-**Use Cases**:
-- XML attribute extraction
-- Complex nested structures
-- Multiple array types
-- Project management scenarios
-
-## Complex XML Files
-
-### 6. `complex-order.xml`
-**Purpose**: Advanced transformation testing
-**Features**:
-- Complex customer structure
-- Multiple address types
-- Item arrays with specifications
-- Financial calculations
-- Tracking information
-- Rich metadata
-
-**Use Cases**:
-- Complex business object transformation
-- Multiple nested levels
-- Financial data processing
-- E-commerce scenarios
-- Advanced property mapping
-
-### 7. `library-books.xml`
-**Purpose**: Library management testing
-**Features**:
-- Book catalog with metadata
-- Author information
-- Classification systems
-- Availability tracking
-- Review systems
-- Statistics and circulation data
-
-**Use Cases**:
-- Library management systems
-- Complex metadata handling
-- Statistical data processing
-- Multi-level classification
-- Review and rating systems
+- **Hierarchical Mapping**: Test nested children structure
+- **Array Processing**: Test array mappings with children
+- **Object Creation**: Test object type mappings
+- **Mixed Types**: Test arrays of different types
+- **Deep Nesting**: Test unlimited nesting levels
+- **Data Types**: Test various data type conversions
+- **Transformations**: Test transformation rules
+- **Default Values**: Test default value handling
 
 ## Testing Scenarios
 
-### Basic Testing
-- Use `simple-person.xml` and `simple-order.xml` for:
-  - Property mapping validation
-  - Data type conversion
-  - Basic transformation rules
+### 1. Basic Company Information
+- Company name extraction
+- Industry with default values
+- Founded year with data type conversion
 
-### Array Mapping Testing
-- Use `company-employees.xml` for:
-  - Employee array processing
-  - Skills array handling
-  - Department mapping
+### 2. Employee Array Processing
+- Raw employee array extraction
+- Structured employee mapping with children
+- Nested department information
+- Skills array with nested structure
 
-### Nested Property Testing
-- Use `company-offices.xml` for:
-  - Address structure mapping
-  - Nested path navigation
-  - International data handling
+### 3. Department Management
+- Department array with manager information
+- Nested manager object creation
+- Complex nested path navigation
 
-### Attribute Testing
-- Use `company-projects.xml` for:
-  - XML attribute extraction
-  - Project status mapping
-  - Team member processing
+### 4. Address and Contact Handling
+- Multiple address types
+- Contact information with boolean conversion
+- Array processing with mixed content
 
-### Complex Business Logic
-- Use `complex-order.xml` for:
-  - E-commerce scenarios
-  - Financial calculations
-  - Customer relationship management
-  - Order tracking systems
+### 5. Metadata Processing
+- Various data types (string, boolean, integer)
+- Complex nested structures
+- Default value handling
 
-### Library Systems
-- Use `library-books.xml` for:
-  - Catalog management
-  - Metadata processing
-  - Classification systems
-  - Statistical analysis
+## Configuration Testing
 
-## Configuration Examples
+### Unified Configuration File
+- **File**: `../configs/unified-company-employees-config.json`
+- **Structure**: Hierarchical children instead of flat fields
+- **Features**: Single, array, and object mapping types
 
-### Simple Person Mapping
+### Mapping Types Tested
+
+#### Single Value Mappings
 ```json
 {
-  "propertyMappings": [
+  "xmlPath": "company/name",
+  "jsonPath": "companyName",
+  "type": "single",
+  "dataType": "string"
+}
+```
+
+#### Array Mappings
+```json
+{
+  "xmlPath": "company/employees/employee",
+  "jsonPath": "allEmployees",
+  "type": "array",
+  "isArray": true
+}
+```
+
+#### Object Mappings with Children
+```json
+{
+  "xmlPath": "company/employees/employee",
+  "jsonPath": "mappedEmployees",
+  "type": "array",
+  "isArray": true,
+  "children": [
     {
-      "xmlPath": "person/name",
-      "jsonPath": "fullName",
-      "dataType": "string"
+      "xmlPath": "id",
+      "jsonPath": "employeeId",
+      "type": "single"
     },
     {
-      "xmlPath": "person/age",
-      "jsonPath": "age",
-      "dataType": "integer"
+      "xmlPath": "department",
+      "jsonPath": "departmentInfo",
+      "type": "object",
+      "children": [...]
     }
   ]
 }
 ```
 
-### Employee Array Mapping
-```json
-{
-  "arrayMappings": {
-    "company/employees/employee|id:employeeId,name:fullName,position:jobTitle,salary:annualSalary": "mappedEmployees"
-  }
-}
+## Test Execution
+
+### Using the Unified Transformer Controller
+
+```bash
+# Test the transformation endpoint
+curl -X POST http://localhost:8080/api/unified-transformer/transform/unified-company-employees-config \
+  -H "Content-Type: text/plain" \
+  -d @unified-company-employees-config.xml
 ```
 
-### Readable Employee Mapping
+### Expected Output Structure
+
 ```json
 {
-  "nestedPropertyMappings": [
+  "companyName": "TechCorp Solutions",
+  "businessType": "Technology",
+  "foundedYear": 2010,
+  "allEmployees": [...],
+  "mappedEmployees": [
     {
-      "xmlPath": "company/employees/employee",
-      "jsonPath": "mappedEmployees",
-      "properties": [
-        {
-          "xmlField": "id",
-          "jsonField": "employeeId",
-          "dataType": "string"
-        },
-        {
-          "xmlField": "name",
-          "jsonField": "fullName",
-          "dataType": "string"
-        }
-      ]
+      "employeeId": "EMP001",
+      "fullName": "John Smith",
+      "departmentInfo": {
+        "deptCode": "DEV",
+        "departmentName": "Development"
+      },
+      "employeeSkills": ["Java", "Spring Boot"]
+    }
+  ],
+  "departments": [
+    {
+      "departmentCode": "DEV",
+      "managerInfo": {
+        "managerName": "Alex Rodriguez",
+        "managerEmail": "alex.rodriguez@techcorp.com"
+      }
     }
   ]
 }
 ```
 
-## Usage
+## Validation Points
 
-1. **Copy XML files** to your test environment
-2. **Create appropriate configurations** for each test scenario
-3. **Run transformations** using the REST API
-4. **Validate results** against expected JSON output
-5. **Test edge cases** with modified XML data
+### 1. Hierarchical Structure
+- Verify nested objects are created correctly
+- Check array processing with children
+- Validate unlimited nesting support
 
-## Tips for Testing
+### 2. Data Type Conversion
+- String to integer conversion (founded year)
+- String to boolean conversion (active status)
+- Default value application
 
-- **Start Simple**: Begin with `simple-person.xml` to validate basic functionality
-- **Progress Gradually**: Move to more complex files as basic features work
-- **Test Edge Cases**: Modify XML files to test error handling
-- **Validate Output**: Always check that the JSON output matches expectations
-- **Performance Test**: Use larger XML files to test performance under load
+### 3. Array Processing
+- Multiple employee extraction
+- Skills array handling
+- Department array with nested objects
+
+### 4. Transformation Rules
+- Trim transformation on names
+- Uppercase/lowercase transformations
+- Custom transformation patterns
+
+### 5. Error Handling
+- Missing field handling
+- Default value fallbacks
+- Invalid path logging
+
+## Performance Testing
+
+### Large XML Documents
+- Test with expanded employee counts (1000+)
+- Monitor memory usage during deep nesting
+- Verify array processing efficiency
+
+### Complex Nested Structures
+- Test with 5+ nesting levels
+- Verify XPath evaluation performance
+- Check memory usage for complex structures
+
+## Troubleshooting
+
+### Common Test Issues
+
+1. **Missing Array Output**
+   - Verify `isArray: true` is set
+   - Check XML path contains correct element names
+   - Ensure proper array type configuration
+
+2. **Nested Object Issues**
+   - Verify object type is set correctly
+   - Check children array is properly defined
+   - Ensure nested paths are correct
+
+3. **Data Type Problems**
+   - Verify XML contains valid data for specified type
+   - Check default value configuration
+   - Validate transformation syntax
+
+### Debug Information
+
+The transformer provides detailed debug output:
+- Node count for each path
+- Array processing results
+- Field mapping success/failure
+- Transformation application status
+
+## Future Test Data
+
+### Planned Test Files
+- **Deep Nesting**: Test extremely deep nested structures
+- **Mixed Arrays**: Test arrays with different child types
+- **Complex Transformations**: Test advanced transformation rules
+- **Edge Cases**: Test boundary conditions and error scenarios
+
+### Test Data Generation
+- **Scripts**: Automated test data generation
+- **Variations**: Different data types and structures
+- **Scalability**: Large document testing
+- **Performance**: Load testing with massive XML files
+
+This test data directory provides comprehensive testing capabilities for the new unified transformation system, ensuring robust validation of hierarchical mapping, array processing, and complex nested structure handling.

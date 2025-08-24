@@ -53,20 +53,50 @@ public interface TransformationConfigRepository extends MongoRepository<Transfor
     long countByVersion(String version);
     
     /**
-     * Custom query to find configurations with specific property mappings
+     * Custom query to find configurations with specific XML path patterns in unified mappings
      */
-    @Query("{ 'propertyMappings.xmlPath': { $regex: ?0, $options: 'i' } }")
+    @Query("{ 'unifiedMappings.xmlPath': { $regex: ?0, $options: 'i' } }")
     List<TransformationConfig> findByXmlPathPattern(String xmlPathPattern);
     
     /**
-     * Custom query to find configurations with specific array mappings
+     * Custom query to find configurations with array type mappings
      */
-    @Query("{ 'arrayMappings': { $exists: true, $ne: {} } }")
+    @Query("{ 'unifiedMappings.type': 'array' }")
     List<TransformationConfig> findConfigurationsWithArrayMappings();
     
     /**
-     * Custom query to find configurations with nested property mappings
+     * Custom query to find configurations with object type mappings (nested structures)
      */
-    @Query("{ 'nestedPropertyMappings': { $exists: true, $ne: [] } }")
-    List<TransformationConfig> findConfigurationsWithNestedMappings();
+    @Query("{ 'unifiedMappings.type': 'object' }")
+    List<TransformationConfig> findConfigurationsWithObjectMappings();
+    
+    /**
+     * Custom query to find configurations with single type mappings
+     */
+    @Query("{ 'unifiedMappings.type': 'single' }")
+    List<TransformationConfig> findConfigurationsWithSingleMappings();
+    
+    /**
+     * Custom query to find configurations with specific JSON path patterns
+     */
+    @Query("{ 'unifiedMappings.jsonPath': { $regex: ?0, $options: 'i' } }")
+    List<TransformationConfig> findByJsonPathPattern(String jsonPathPattern);
+    
+    /**
+     * Custom query to find configurations with transformations
+     */
+    @Query("{ 'transformations': { $exists: true, $ne: {} } }")
+    List<TransformationConfig> findConfigurationsWithTransformations();
+    
+    /**
+     * Custom query to find configurations with default values
+     */
+    @Query("{ 'defaultValues': { $exists: true, $ne: {} } }")
+    List<TransformationConfig> findConfigurationsWithDefaultValues();
+    
+    /**
+     * Custom query to find configurations by mapping type and depth
+     */
+    @Query("{ 'unifiedMappings': { $elemMatch: { 'type': ?0, 'children': { $exists: true, $ne: [] } } } }")
+    List<TransformationConfig> findByMappingTypeWithChildren(String mappingType);
 }

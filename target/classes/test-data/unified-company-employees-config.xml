@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<company>
+    <name>TechCorp Solutions</name>
+    <industry>Technology</industry>
+    <founded>2010</founded>
+    
+    <employees>
+        <employee>
+            <id>EMP001</id>
+            <name>John Smith</name>
+            <position>Senior Software Engineer</position>
+            <salary>95000</salary>
+            <department>
+                <deptId>DEV</deptId>
+                <deptName>Development</deptName>
+            </department>
+            <skills>
+                <skill>Java</skill>
+                <skill>Spring Boot</skill>
+                <skill>Microservices</skill>
+                <skill>Docker</skill>
+            </skills>
+        </employee>
+        
+        <employee>
+            <id>EMP002</id>
+            <name>Sarah Johnson</name>
+            <position>Product Manager</position>
+            <salary>110000</salary>
+            <department>
+                <deptId>PM</deptId>
+                <deptName>Product Management</deptName>
+            </department>
+            <skills>
+                <skill>Agile</skill>
+                <skill>User Research</skill>
+                <skill>Data Analysis</skill>
+            </skills>
+        </employee>
+        
+        <employee>
+            <id>EMP003</id>
+            <name>Michael Chen</name>
+            <position>DevOps Engineer</position>
+            <salary>105000</salary>
+            <department>
+                <deptId>OPS</deptId>
+                <deptName>Operations</deptName>
+            </department>
+            <skills>
+                <skill>Kubernetes</skill>
+                <skill>AWS</skill>
+                <skill>Jenkins</skill>
+                <skill>Linux</skill>
+            </skills>
+        </employee>
+        
+        <employee>
+            <id>EMP004</id>
+            <name>Emily Davis</name>
+            <position>UX Designer</position>
+            <salary>85000</salary>
+            <department>
+                <deptId>DESIGN</deptId>
+                <deptName>Design</deptName>
+            </department>
+            <skills>
+                <skill>Figma</skill>
+                <skill>User Testing</skill>
+                <skill>Prototyping</skill>
+            </skills>
+        </employee>
+        
+        <employee>
+            <id>EMP005</id>
+            <name>David Wilson</name>
+            <position>Data Scientist</position>
+            <salary>120000</salary>
+            <department>
+                <deptId>DATA</deptId>
+                <deptName>Data Science</deptName>
+            </department>
+            <skills>
+                <skill>Python</skill>
+                <skill>Machine Learning</skill>
+                <skill>SQL</skill>
+                <skill>TensorFlow</skill>
+            </skills>
+        </employee>
+    </employees>
+    
+    <departments>
+        <department>
+            <deptId>DEV</deptId>
+            <deptName>Development</deptName>
+            <manager>
+                <name>Alex Rodriguez</name>
+                <email>alex.rodriguez@techcorp.com</email>
+            </manager>
+        </department>
+        
+        <department>
+            <deptId>PM</deptId>
+            <deptName>Product Management</deptName>
+            <manager>
+                <name>Lisa Thompson</name>
+                <email>lisa.thompson@techcorp.com</email>
+            </manager>
+        </department>
+        
+        <department>
+            <deptId>OPS</deptId>
+            <deptName>Operations</deptName>
+            <manager>
+                <name>Robert Kim</name>
+                <email>robert.kim@techcorp.com</email>
+            </manager>
+        </department>
+        
+        <department>
+            <deptId>DESIGN</deptId>
+            <deptName>Design</deptName>
+            <manager>
+                <name>Jennifer Lee</name>
+                <email>jennifer.lee@techcorp.com</email>
+            </manager>
+        </department>
+        
+        <department>
+            <deptId>DATA</deptId>
+            <deptName>Data Science</deptName>
+            <manager>
+                <name>Carlos Martinez</name>
+                <email>carlos.martinez@techcorp.com</email>
+            </manager>
+        </department>
+        
+        <department>
+            <deptId>HR</deptId>
+            <deptName>Human Resources</deptName>
+            <manager>
+                <name>Amanda Foster</name>
+                <email>amanda.foster@techcorp.com</email>
+            </manager>
+        </department>
+    </departments>
+    
+    <addresses>
+        <address>
+            <type>headquarters</type>
+            <street>123 Innovation Drive</street>
+            <city>San Francisco</city>
+            <state>CA</state>
+            <zip>94105</zip>
+        </address>
+        
+        <address>
+            <type>branch</type>
+            <street>456 Tech Boulevard</street>
+            <city>Austin</city>
+            <state>TX</state>
+            <zip>78701</zip>
+        </address>
+        
+        <address>
+            <type>branch</type>
+            <street>789 Startup Street</street>
+            <city>Seattle</city>
+            <state>WA</state>
+            <zip>98101</zip>
+        </address>
+        
+        <address>
+            <type>branch</type>
+            <street>321 Digital Lane</street>
+            <city>New York</city>
+            <state>NY</state>
+            <zip>10001</zip>
+        </address>
+    </addresses>
+    
+    <contacts>
+        <contact>
+            <type>phone</type>
+            <value>+1-555-0123</value>
+            <primary>true</primary>
+        </contact>
+        
+        <contact>
+            <type>email</type>
+            <value>info@techcorp.com</value>
+            <primary>true</primary>
+        </contact>
+        
+        <contact>
+            <type>phone</type>
+            <value>+1-555-0124</value>
+            <primary>false</primary>
+        </contact>
+        
+        <contact>
+            <type>email</type>
+            <value>support@techcorp.com</value>
+            <primary>false</primary>
+        </contact>
+        
+        <contact>
+            <type>website</type>
+            <value>https://www.techcorp.com</value>
+            <primary>false</primary>
+        </contact>
+        
+        <contact>
+            <type>linkedin</type>
+            <value>https://linkedin.com/company/techcorp-solutions</value>
+            <primary>false</primary>
+        </contact>
+    </contacts>
+    
+    <metadata>
+        <lastUpdated>2024-01-15T10:30:00Z</lastUpdated>
+        <version>2.1</version>
+        <active>true</active>
+        <employeeCount>5</employeeCount>
+        <departmentCount>6</departmentCount>
+        <totalRevenue>5000000</totalRevenue>
+        <foundedLocation>San Francisco, CA</foundedLocation>
+    </metadata>
+</company>

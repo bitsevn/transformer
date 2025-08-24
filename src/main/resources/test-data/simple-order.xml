@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<order>
-    <orderId>ORD-001</orderId>
-    <customerName>Jane Smith</customerName>
-    <orderDate>2024-01-15</orderDate>
-    <totalAmount>99.99</totalAmount>
-    <currency>USD</currency>
-    <status>PENDING</status>
-</order>

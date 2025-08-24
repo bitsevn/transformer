@@ -1,0 +1,226 @@
+{
+  "name": "Unified Company Employees Configuration",
+  "version": "2.0",
+  "description": "Unified configuration for company employees XML to JSON transformation",
+  "unifiedMappings": [
+    {
+      "xmlPath": "company/name",
+      "jsonPath": "companyName",
+      "type": "single",
+      "dataType": "string",
+      "required": true
+    },
+    {
+      "xmlPath": "company/industry",
+      "jsonPath": "businessType",
+      "type": "single",
+      "dataType": "string",
+      "defaultValue": "Technology"
+    },
+    {
+      "xmlPath": "company/founded",
+      "jsonPath": "foundedYear",
+      "type": "single",
+      "dataType": "integer",
+      "defaultValue": 2000
+    },
+    {
+      "xmlPath": "company/employees/employee",
+      "jsonPath": "allEmployees",
+      "type": "array",
+      "isArray": true
+    },
+    {
+      "xmlPath": "company/employees/employee",
+      "jsonPath": "mappedEmployees",
+      "type": "array",
+      "isArray": true,
+      "children": [
+        {
+          "xmlPath": "id",
+          "jsonPath": "employeeId",
+          "type": "single",
+          "dataType": "string",
+          "required": true
+        },
+        {
+          "xmlPath": "name",
+          "jsonPath": "fullName",
+          "type": "single",
+          "dataType": "string",
+          "required": true,
+          "transform": "trim"
+        },
+        {
+          "xmlPath": "position",
+          "jsonPath": "jobTitle",
+          "type": "single",
+          "dataType": "string",
+          "required": false
+        },
+        {
+          "xmlPath": "salary",
+          "jsonPath": "annualSalary",
+          "type": "single",
+          "dataType": "integer",
+          "required": false
+        },
+        {
+          "xmlPath": "department",
+          "jsonPath": "departmentInfo",
+          "type": "object",
+          "children": [
+            {
+              "xmlPath": "deptId",
+              "jsonPath": "deptCode",
+              "type": "single",
+              "dataType": "string",
+              "required": false
+            },
+            {
+              "xmlPath": "deptName",
+              "jsonPath": "departmentName",
+              "type": "single",
+              "dataType": "string",
+              "required": false
+            }
+          ]
+        },
+        {
+          "xmlPath": "skills",
+          "jsonPath": "employeeSkills",
+          "type": "array",
+          "isArray": true,
+          "children": [
+            {
+              "xmlPath": "skill",
+              "jsonPath": "skillName",
+              "type": "single",
+              "dataType": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "xmlPath": "company/employees/employee/skills/skill",
+      "jsonPath": "allSkills",
+      "type": "array",
+      "isArray": true
+    },
+    {
+      "xmlPath": "company/departments/department",
+      "jsonPath": "departments",
+      "type": "array",
+      "isArray": true,
+      "children": [
+        {
+          "xmlPath": "deptId",
+          "jsonPath": "departmentCode",
+          "type": "single",
+          "dataType": "string"
+        },
+        {
+          "xmlPath": "deptName",
+          "jsonPath": "departmentName",
+          "type": "single",
+          "dataType": "string"
+        },
+        {
+          "xmlPath": "manager",
+          "jsonPath": "managerInfo",
+          "type": "object",
+          "children": [
+            {
+              "xmlPath": "name",
+              "jsonPath": "managerName",
+              "type": "single",
+              "dataType": "string"
+            },
+            {
+              "xmlPath": "email",
+              "jsonPath": "managerEmail",
+              "type": "single",
+              "dataType": "string"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "xmlPath": "company/addresses/address",
+      "jsonPath": "companyAddresses",
+      "type": "array",
+      "isArray": true,
+      "children": [
+        {
+          "xmlPath": "type",
+          "jsonPath": "addressType",
+          "type": "single",
+          "dataType": "string"
+        },
+        {
+          "xmlPath": "street",
+          "jsonPath": "streetAddress",
+          "type": "single",
+          "dataType": "string"
+        },
+        {
+          "xmlPath": "city",
+          "jsonPath": "cityName",
+          "type": "single",
+          "dataType": "string"
+        },
+        {
+          "xmlPath": "state",
+          "jsonPath": "stateCode",
+          "type": "single",
+          "dataType": "string"
+        },
+        {
+          "xmlPath": "zip",
+          "jsonPath": "postalCode",
+          "type": "single",
+          "dataType": "string"
+        }
+      ]
+    },
+    {
+      "xmlPath": "company/contacts/contact",
+      "jsonPath": "contactInfo",
+      "type": "array",
+      "isArray": true,
+      "children": [
+        {
+          "xmlPath": "type",
+          "jsonPath": "contactType",
+          "type": "single",
+          "dataType": "string"
+        },
+        {
+          "xmlPath": "value",
+          "jsonPath": "contactValue",
+          "type": "single",
+          "dataType": "string"
+        },
+        {
+          "xmlPath": "primary",
+          "jsonPath": "isPrimary",
+          "type": "single",
+          "dataType": "boolean"
+        }
+      ]
+    }
+  ],
+  "transformations": {
+    "uppercase": "uppercase",
+    "lowercase": "lowercase",
+    "trim": "trim",
+    "capitalize": "replace:^[a-z]|\\b[a-z]:${0:0:1}${0:1}"
+  },
+  "defaultValues": {
+    "businessType": "Technology",
+    "foundedYear": 2000,
+    "isActive": true
+  }
+}
